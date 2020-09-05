@@ -13,7 +13,7 @@ Then you can:
 
 clone this repo (and edit), create virtualenv, install dependencies from `requirements.txt`
 
-```
+```bash
 git clone https://github.com/psqnt/sats_standard.git
 cd sats_standard
 python -m venv venv

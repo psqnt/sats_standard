@@ -1,0 +1,11 @@
+1 share of $SPY costs:
+~{{ "{:,}".format(spy_in_sats) }} sats
+
+{% if percent_change %}
+    24 Hour Change:
+    $SPY {{ percent_change }}% against #bitcoin
+{% endif %}
+
+Calculations based on:
+1 $BTC = ${{ btc_price }}
+1 $SPY = ${{ spy_price }}

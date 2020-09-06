@@ -2,6 +2,8 @@
 
 A Twitter bot which pulls $SPY price and Bitcoin price and denominates the price of 1 share of $SPY in satoshis (bitcoin base unit), then it publishes the tweet.
 
+[Follow the bot here](https://twitter.com/SatsStandard)
+
 ## Purpose
 
 This project had two purposes:

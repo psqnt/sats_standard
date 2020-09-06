@@ -1,11 +1,12 @@
-1 share of $SPY costs:
-~{{ "{:,}".format(spy_in_sats) }} sats
-
-{% if percent_change %}
-    24 Hour Change:
-    $SPY {{ percent_change }}% against #bitcoin
+$SPY {{ "{:,}".format(spy_in_sats) }} sats
+{% if hourly_change %}
+Hourly:
+{{ hourly_symbol }}{{ hourly_difference }} ({{ hourly_symbol }}{{ hourly_change }}%)
 {% endif %}
-
+{% if daily_change %}
+Daily:
+{{ daily_symbol }}{{ daily_difference }} ({{ daily_symbol }}{{ daily_change }}%)
+{% endif %}
 Calculations based on:
 1 $BTC = ${{ btc_price }}
 1 $SPY = ${{ spy_price }}

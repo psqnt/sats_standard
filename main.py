@@ -16,6 +16,11 @@ def compose_tweet(tweet_data: dict):
     return template.render(**tweet_data)
 
 
+def get_percent_change(new_price, old_price):
+    percent_change = abs((new_price - old_price) / old_price) * 100
+    return "{:.2f}".format(percent_change)
+
+
 # Load environment variables into the system - api keys
 # Setting override to True in case we get generated api keys
 env_path = Path('.') / '.env'
@@ -53,30 +58,73 @@ spy_in_sats = int(current_spy_in_dollars * sats_per_dollar)
 Session = initialize_database()
 session = Session()
 
-# Check if we have any price history
+# Get stored Assets (Bitcoin and SPY)
+btc = session.query(Asset).filter_by(ticker='BTC').first()
+spy = session.query(Asset).filter_by(ticker='SPY').first()
+
+# New PriceHistory written every hour, pull the previous entry
+spy_price_last_hour = (
+    session.query(PriceHistory)
+    .filter(PriceHistory.asset_id==spy.id)
+    .order_by(PriceHistory.timestamp.desc())
+    .first()
+)
+
+# In case the cronjob is delayed or early (not sure if early is possible)
+# Query in between a 10 minute timespan for an entry
 yesterday_datetime_early = datetime.now() - timedelta(days=1, minutes=5)
 yesterday_datetime_late = datetime.now() - timedelta(days=1) + timedelta(minutes=5)
-spy = session.query(Asset).filter_by(ticker='SPY').first()
-btc = session.query(Asset).filter_by(ticker='BTC').first()
-spy_price_yesterday = session.query(PriceHistory).filter(
-    PriceHistory.timestamp >= yesterday_datetime_early,
-    PriceHistory.timestamp <= yesterday_datetime_late,
-    PriceHistory.asset_id == spy.id
-).first()
+
+spy_price_yesterday = (
+    session.query(PriceHistory)
+    .filter(
+        PriceHistory.timestamp>=yesterday_datetime_early,
+        PriceHistory.timestamp<=yesterday_datetime_late,
+        PriceHistory.asset_id==spy.id
+    ).first()
+)
+
+# Convert values to percentages
+if spy_price_last_hour is None:
+    hourly_change = None
+    hourly_symbol = None
+    sats_hourly_difference = None
+else:
+    spy_in_sats_previous = spy_price_last_hour.price_sats
+    sats_hourly_difference = spy_in_sats - spy_in_sats_previous
+    hourly_change = get_percent_change(spy_in_sats_previous, spy_in_sats)
+    if sats_hourly_difference >= 0:
+        hourly_symbol = '+'
+    else:
+        hourly_symbol = '-'
+    sats_hourly_difference = abs(sats_hourly_difference)  # remove symbol
 
 if spy_price_yesterday is None:
-    percent_change = None
+    daily_change = None
+    daily_symbol = None
+    sats_daily_difference = None
 else:
-    percent_change = (spy_price_yesterday.price_sats - spy_in_sats) / spy_in_sats
+    spy_in_sats_previous_day = spy_price_yesterday.price_sats
+    sats_daily_difference = spy_in_sats - spy_in_sats_previous_day
+    daily_change = get_percent_change(spy_in_sats_previous_day, spy_in_sats)
+    if sats_daily_difference >= 0:
+        daily_symbol = '+'
+    else:
+        daily_symbol = '-'
+    sats_daily_difference = abs(sats_daily_difference)
 
 # Data package to build the tweet
 tweet_data = {
     'spy_in_sats': spy_in_sats,
-    'percent_change': percent_change,
+    'hourly_change': hourly_change,
+    'hourly_symbol': hourly_symbol,
+    'hourly_difference': sats_hourly_difference,
+    'daily_change': daily_change,
+    'daily_symbol': daily_symbol,
+    'daily_difference': sats_daily_difference,
     'btc_price': current_btc_in_dollars,
     'spy_price': current_spy_in_dollars
 }
-
 
 # Authorize twitter client
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)

@@ -36,9 +36,27 @@ class TextPickleType(TypeDecorator):
 class Tweet(Base):
     __tablename__ = 'tweet'
     id = Column(Integer, primary_key=True)
+    tweet_id = Column(String(25))
+    parent_tweet_id = Column(String(25))  # only if replying to a tweet
     timestamp = Column(DateTime, default=datetime.utcnow)
     content = Column(String(240))
     tweet_data = Column(TextPickleType())
+
+    def __repr__(self):
+        return f'<Tweet: {self.tweet_id}>'
+
+    def serialized(self):
+        '''
+        Returns table data in dictionary format
+        '''
+        return {
+            'id': self.id,
+            'tweet_id': self.tweet_id,
+            'parent_tweet_id': self.parent_tweet_id,
+            'timestamp': self.timestamp,
+            'content': self.content,
+            'tweet_data': self.tweet_data
+        }
 
 
 class Asset(Base):
@@ -46,6 +64,19 @@ class Asset(Base):
     id = Column(Integer, primary_key=True)
     ticker = Column(String(5), unique=True)
     price_history = relationship("PriceHistory", back_populates="asset")
+
+    def __repr__(self):
+        return f'<Asset: {self.ticker}>'
+
+    def serialized(self):
+        '''
+        Returns table data in dictionary format
+        '''
+        return {
+            'id': self.id,
+            'ticker': self.ticker,
+            'price_history': [h.serialized() for h in self.price_history]
+        }
 
 
 class PriceHistory(Base):
@@ -56,6 +87,21 @@ class PriceHistory(Base):
     price = Column(Integer)  # in pennies
     price_sats = Column(Integer)  # in sats
     timestamp = Column(DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<PriceHistory: {self.asset.ticker}>'
+
+    def serialized(self):
+        '''
+        Returns table data in dictionary format
+        '''
+        return {
+            'id': self.id,
+            'asset_id': self.asset_id,
+            'price': self.price,
+            'price_sats': self.price_sats,
+            'timestamp': self.timestamp
+        }
 
 
 def initialize_database():

@@ -83,27 +83,38 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(twitter_key, twitter_secret)
 api = tweepy.API(auth)
 
-# Compose tweet, write data to database
+# Compose tweet
 tweet_content = compose_tweet(tweet_data)
-tweet = Tweet(
-    content=tweet_content,
-    tweet_data=tweet_data
-)
-spy_price_history = PriceHistory(
-    asset_id=spy.id,
-    price=current_spy_in_dollars,
-    price_sats=spy_in_sats,
-)
-btc_price_history = PriceHistory(
-    asset_id=btc.id,
-    price=current_btc_in_dollars,
-    price_sats=sats_in_btc
-)
-session.add(tweet)
-session.add(spy_price_history)
-session.add(btc_price_history)
-session.commit()
 
-# Post tweet and close database connection
-api.update_status(tweet_content)
+# Post tweet
+try:
+    response = api.update_status(tweet_content)
+except tweepy.error.TweepError as e:
+    print(e)
+    response = False
+
+# Write data to database
+if response:
+    tweet_id = response.id_str
+    tweet = Tweet(
+        tweet_id=tweet_id,
+        content=tweet_content,
+        tweet_data=tweet_data
+    )
+    spy_price_history = PriceHistory(
+        asset_id=spy.id,
+        price=current_spy_in_dollars,
+        price_sats=spy_in_sats,
+    )
+    btc_price_history = PriceHistory(
+        asset_id=btc.id,
+        price=current_btc_in_dollars,
+        price_sats=sats_in_btc
+    )
+    session.add(tweet)
+    session.add(spy_price_history)
+    session.add(btc_price_history)
+    session.commit()
+
+# Close database connection
 session.close()

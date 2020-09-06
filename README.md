@@ -2,6 +2,24 @@
 
 A Twitter bot which pulls $SPY price and Bitcoin price and denominates the price of 1 share of $SPY in satoshis (bitcoin base unit), then it publishes the tweet.
 
+## Purpose
+
+This project had two purposes:
+1. Provide an easily accessible way to see $SPY priced in Bitcoin (easily accessible meaning following this bot)
+2. Provide a simple example to others attempting to build twitter bots
+
+## Tools
+
+List of other technologies used in this project and the purpose they serve:
+
+* [Python](https://github.com/python/cpython)
+* [SqlAlchemy](https://github.com/sqlalchemy/sqlalchemy) and [SQLite](https://github.com/mackyle/sqlite) for Database Object Relation Mapping and the actual Database (file)
+* [Tweepy](https://github.com/tweepy/tweepy) a Python Twitter Client used to post tweets
+* [Coinbase Client](https://github.com/danpaquin/coinbasepro-python) to pull Bitcoin price data
+* [Finnhub Client](https://github.com/Finnhub-Stock-API/finnhub-python) to pull Stock price data
+* [Jinja](https://github.com/pallets/jinja) a template engine used to compose tweets
+
+
 ## Usage
 
 Note this will not work for you right off the bat. You will need to:

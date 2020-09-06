@@ -43,6 +43,21 @@ pip install -r requirements.txt
 
 Once the project is setup, you should run this in a crontab on a computer / server that is always on.
 
+## Example Crontab
+
+On a computer running 24/7 (Always On) - created a crontab and add this to it (make sure it is the correct path to your project)
+
+Open crontab edit
+```
+$ crontab -e
+```
+
+Add this to the crontab file. It sources the environment variables needed for API keys and executes the python program using the virtualenvs python (which means it has the dependencies installed)
+```
+# Run the twitter bot once every 1 at the beginning of every hour
+0 * * * * . /path/to/project/.env; /path/to/project/venv/bin/python3 /path/to/project/main.py
+```
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

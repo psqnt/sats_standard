@@ -12,6 +12,8 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.types import TypeDecorator
+from pathlib import Path  # Python 3.6+ only
+
 
 Base = declarative_base()
 
@@ -108,7 +110,8 @@ def initialize_database():
     '''
     Initialize the database and create the tables, return session maker
     '''
-    engine = create_engine('sqlite:///app.db')
+    db_filepath = Path(__file__).parent.absolute() / Path('app.db')
+    engine = create_engine(f'sqlite:///{db_filepath}')
     Base.metadata.create_all(bind=engine)
     Session = sessionmaker(bind=engine)
     session = Session()

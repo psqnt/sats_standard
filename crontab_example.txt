@@ -1,0 +1,2 @@
+# Run twitter bot main.py code every 2 hours
+0 */2 * * * . ~/Projects/sats_standard/.env; ~/Projects/sats_standard/venv/bin/python3 ~/Projects/sats_standard/main.py

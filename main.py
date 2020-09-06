@@ -11,7 +11,9 @@ from db import initialize_database, Asset, PriceHistory, Tweet
 
 
 def compose_tweet(tweet_data: dict):
-    placeholder = Path('tweet_template.txt').read_text()
+    placeholder = (
+        Path(__file__).parent.absolute() / Path('tweet_template.txt')
+    ).read_text()
     template = Template(placeholder)
     return template.render(**tweet_data)
 

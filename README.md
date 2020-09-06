@@ -45,7 +45,7 @@ Once the project is setup, you should run this in a crontab on a computer / serv
 
 ## Example Crontab
 
-On a computer running 24/7 (Always On) - created a crontab and add this to it (make sure it is the correct path to your project)
+On a computer running 24/7 (Always On) - create a crontab and add this to it (make sure it is the correct path to your project)
 
 Open crontab edit
 ```
@@ -58,9 +58,36 @@ Add this to the crontab file. It sources the environment variables needed for AP
 0 * * * * . /path/to/project/.env; /path/to/project/venv/bin/python3 /path/to/project/main.py
 ```
 
+## Query Saved Data
+
+In the root project directory an sqlite database file `app.db` will be created and appended to by this program.
+
+You can query the data by using `sqlite3` in the command line directly
+
+```
+$ sqlite3 app.db
+```
+
+or in the python interpreter (virtualenv python so it has dependencies):
+```python
+(venv) $ python
+Python 3.8.5 (default, Jul 21 2020, 10:48:26)
+[Clang 11.0.3 (clang-1103.0.32.62)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from db import initialize_database, Asset, PriceHistory, Tweet
+>>> Session = initialize_database()
+>>> session = Session()
+>>> tweets = session.query(Tweet).all()
+>>> for t in tweets:
+...     print(t.tweet_id, t.tweet_data)
+...
+1302615226446237698 {'spy_in_sats': 3357871, 'percent_change': None, 'btc_price': '10201.01', 'spy_price': 342.57}
+```
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
+
 [MIT](https://github.com/psqnt/sats_standard/blob/master/LICENSE)

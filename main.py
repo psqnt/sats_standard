@@ -54,8 +54,8 @@ Session = initialize_database()
 session = Session()
 
 # Check if we have any price history
-yesterday_datetime_early = datetime.now() - timedelta(days=1, hours=1)
-yesterday_datetime_late = datetime.now() - timedelta(days=1) + timedelta(hours=1)
+yesterday_datetime_early = datetime.now() - timedelta(days=1, minutes=5)
+yesterday_datetime_late = datetime.now() - timedelta(days=1) + timedelta(minutes=5)
 spy = session.query(Asset).filter_by(ticker='SPY').first()
 btc = session.query(Asset).filter_by(ticker='BTC').first()
 spy_price_yesterday = session.query(PriceHistory).filter(

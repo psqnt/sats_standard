@@ -1,10 +1,10 @@
 $SPY {{ "{:,}".format(spy_in_sats) }} sats
 {% if hourly_change %}
-Hourly:
+1 hour change:
 {{ hourly_symbol }}{{ hourly_difference }} ({{ hourly_symbol }}{{ hourly_change }}%)
 {% endif %}
 {% if daily_change %}
-Daily:
+24 hour change:
 {{ daily_symbol }}{{ daily_difference }} ({{ daily_symbol }}{{ daily_change }}%)
 {% endif %}
 Calculations based on:

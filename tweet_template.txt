@@ -8,5 +8,5 @@ $SPY {{ "{:,}".format(spy_in_sats) }} sats
 {{ daily_symbol }}{{ daily_difference }} ({{ daily_symbol }}{{ daily_change }}%)
 {% endif %}
 Calculations based on:
-1 $BTC = ${{ btc_price }}
-1 $SPY = ${{ spy_price }}
+$BTC ${{ btc_price }}
+$SPY ${{ spy_price }}
